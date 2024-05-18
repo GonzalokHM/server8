@@ -6,7 +6,7 @@ const indexRouter = require('./src/api/routes/indexRouter');
 const cloudinary = require('cloudinary').v2
 const cors = require("cors");
 
-const server = express();
+const app = express();
 
 connectDB();
 
@@ -16,24 +16,24 @@ cloudinary.config({
   api_secret:process.env.API_SECRET
 })
 
-server.use(cors());
-server.use(express.json())
+app.use(cors());
+app.use(express.json())
 
-server.use('/api/v1', indexRouter);
+app.use('/api/v1', indexRouter);
 
-server.use('*', (req, res, next) => {
+app.use('*', (req, res, next) => {
   return next(setError(404, 'Not found'));
   //   res.status(404).json('no tengo nada que ofrecerte 😞');
 });
 
 //controlador errores generales de servidor
-server.use((error, req, res, next) => {
+app.use((error, req, res, next) => {
   return res
     .status(error.status || 500)
-    .json(error.message || 'Internal Server Error');
+    .json(error.message || 'Internal server Error');
 });
 
 const PORT = 4001;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`escuchando en: http//:localhost:${PORT}`);
 });

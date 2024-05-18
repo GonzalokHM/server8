@@ -6,20 +6,32 @@ const isAuth = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
     if (!token) {
-        console.log('notoken');
+      console.log('notoken');
       return next(setError(400, 'te has columpiado, acceso privado'));
     }
 
     const parsedToken = token.replace('Bearer', '').trim();
-    const validToken = verifyJwt(parsedToken);
-    const userLogued = await User.findById(validToken.id);
+    const { id } = verifyJwt(parsedToken);
+    const userLogued = await User.findById(id);
+
     userLogued.password = null;
     req.user = userLogued;
-    
+
     next();
   } catch (error) {
     return next(setError(400, 'llave incorrecta'));
   }
 };
+const isAdmin = async (req, res, next) => {
+  if (!req.user) {
+    return next(setError(401, 'No autenticado'));
+  }
 
-module.exports = { isAuth };
+  if (req.user.rol !== 'admin') {
+    return next(setError(403, 'Esta acción sólo la pueden realizar los administradores'));
+  }
+
+  next();
+};
+
+module.exports = { isAuth , isAdmin};

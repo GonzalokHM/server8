@@ -1,5 +1,5 @@
 const { setError } = require('../../config/error');
-const { deleteFile } = require('../../middlewares/deleteFile');
+const { deleteFile } = require('../../util/deleteFile');
 const Product = require('../model/product');
 
 const getAllProducts = async (req, res, next) => {
@@ -20,6 +20,27 @@ const getProductByid = async (req, res, next) => {
     return next(setError(400, "can't find product 😱"));
   }
 };
+
+const getProductsByCategory = async (req, res, next) => {
+  try {
+    const { categories } = req.params;
+    const products = await Product.find({ categories });
+    return res.status(200).json(products);
+  } catch (error) {
+    return res.status(400).json("Error en la solicitud");
+  }
+};
+
+const getProductsByPrice = async (req, res, next) => {
+  try {
+    const { price } = req.params;
+    const products = await Product.find({ price: { $lte: price } });
+    return res.status(200).json(products);
+  } catch (error) {
+    return res.status(400).json("Error en la solicitud");
+  }
+};
+
 const createProduct = async (req, res, next) => {
   try {
     const newProduct = new Product(req.body);
@@ -76,6 +97,8 @@ const deleteProduct = async (req, res, next) => {
 module.exports = {
   getAllProducts,
   getProductByid,
+  getProductsByCategory,
+  getProductsByPrice,
   createProduct,
   updateProduct,
   deleteProduct,

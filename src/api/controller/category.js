@@ -1,4 +1,5 @@
 const { setError } = require('../../config/error');
+const { deleteFile } = require('../../util/deleteFile');
 const Category = require('../model/category');
 
 const getAllCategories = async (req, res, next) => {
@@ -38,6 +39,7 @@ const updateCategory = async (req, res, next) => {
 
     if (req.file) {
       newCategory.logo = req.file.path;
+      deleteFile(oldCategory.logo);
     }
 
     newCategory._id = id;

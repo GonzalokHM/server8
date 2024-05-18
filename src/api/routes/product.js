@@ -1,4 +1,4 @@
-const { isAuth } = require('../../middlewares/auth');
+const { isAuth, isAdmin } = require('../../middlewares/auth');
 const upload = require('../../middlewares/file');
 const {
   getAllProducts,
@@ -6,14 +6,18 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductsByPrice,
+  getProductsByCategory,
 } = require('../controller/product');
 
 const productsRoutes = require('express').Router();
 
 productsRoutes.get('/', getAllProducts);
+productsRoutes.get("/categories/:categories", getProductsByCategory);
+productsRoutes.get("/price/:price", getProductsByPrice);
 productsRoutes.get('/:id', getProductByid);
 productsRoutes.post('/', [isAuth], upload.single('image'), createProduct);
-productsRoutes.put('/:id', [isAuth], upload.single('image'), updateProduct);
-productsRoutes.delete('/:id', [isAuth], deleteProduct);
+productsRoutes.put('/:id',  [isAuth , isAdmin], upload.single('image'), updateProduct);
+productsRoutes.delete('/:id',  [isAuth , isAdmin], deleteProduct);
 
 module.exports = productsRoutes;

@@ -1,7 +1,17 @@
 const { setError } = require('../../config/error');
 const { generateSign } = require('../../config/jwt');
+const { deleteFile } = require('../../util/deleteFile');
 const User = require('../model/user');
 const bcrypt = require('bcrypt');
+
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json(users);
+  } catch (error) {
+    return next(setError(400, 'no users found'));
+  }
+};
 
 const register = async (req, res, next) => {
   try {
@@ -51,7 +61,6 @@ const updateUser = async (req, res, next) => {
 
     newUser._id = id;
 
-    // Agregar nuevas categorías si se proporcionan, asegurando que sean únicas
     if (req.userName) {
       newUser.userName = req.body.userName
     }
@@ -74,4 +83,4 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login , updateUser, deleteUser};
+module.exports = { getUsers, register, login , updateUser, deleteUser};
