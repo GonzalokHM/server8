@@ -15,14 +15,8 @@ const saveDocuments = async () => {
   try {
     const categories = await Category.insertMany(seed.categories);
     console.log('>>> categorias insertadas con éxito!');
-    
-    // Agregar la referencia de categoria a cada producto antes de insertar
-    const productsData = seed.products.map(product => ({
-        ...product,
-        categories: product.categories.map(cat => categoryMap[cat.toLowerCase()]),
-      }));
 
-      const products = await Product.insertMany(productsData);
+      const products = await Product.insertMany(seed.products);
       console.log('>>> productos insertados con éxito!');
       
     // Actualizar las categorias con los productos correspondientes

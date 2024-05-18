@@ -16,8 +16,20 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
 ## Modelos
 
 - **User**: Usuarios que pueden registrarse y loguearse.
+  - `userName`: Nombre de usuario.
+  - `password`: Contraseña.
+  - `avatar`: Imagen de avatar.
+  - `rol`: Rol del usuario.
 - **Product**: Productos disponibles en la plataforma.
+  - `name`: Nombre del producto.
+  - `image`: Imagen del producto.
+  - `categories`: Categorías a las que pertenece el producto.
+  - `price`: Precio del producto.
+  - `stock`: Disponibilidad del producto.
 - **Category**: Categorías asociadas a los productos.
+  - `name`: Nombre de la categoría.
+  - `logo`: Logo de la categoría.
+  - `products`: Lista de productos asociados a la categoría.
 
 ## Endpoints
 
@@ -57,4 +69,4 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
 
 ## Despliegue
 
-[store-server8 | vercel](https://store-server7.vercel.app/api/v1/)
+[store-server8 | vercel](https://store8.vercel.app/api/v1/)
