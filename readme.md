@@ -69,4 +69,4 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
 
 ## Despliegue
 
-[store-server8 | vercel](https://store8.vercel.app/api/v1/)
+[store-server8 | vercel](https://server8.vercel.app/api/v1/)
