@@ -20,6 +20,7 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
   - `password`: Contraseña.
   - `avatar`: Imagen de avatar.
   - `rol`: Rol del usuario.
+  - `favorites`: Lista de productos favoritos del usuario.
 - **Product**: Productos disponibles en la plataforma.
   - `name`: Nombre del producto.
   - `image`: Imagen del producto.
@@ -41,7 +42,8 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
 ### Usuarios
 
 - **GET** `/users`: Lista de todos los usuarios.
-- **PUT** `/users/auth/avatar`: Editar nombre de usuario y añadir/cambiar un avatar subiendo una imagen a Cloudinary (Requiere JWT).
+- **PUT** `/users/auth/avatar`: Editar campos del usuario y añadir/cambiar un avatar subiendo una imagen a Cloudinary (Requiere JWT), no hace falta pasar id, lo coge del bearer.
+- **PUT** `/users/auth/:id`: Modificar el rol de un usuario (Requiere JWT y rol de Admin)
 - **DELETE** `/users/auth/deleteUser`: Eliminar un usuario (Requiere JWT).
 
 ### Productos
@@ -51,6 +53,7 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
 - **GET** `/products/price/:price`: Listar todos los productos según el precio especificado.
 - **GET** `/products/:id`: Obtener un producto específico.
 - **POST** `/products`: Crear un nuevo producto (se puede subir archivos de imagen a Cloudinary) (Requiere JWT).
+- **POST** `/products/:id/favorites`: Añadir un producto a la lista de favoritos del usuario (Requiere JWT).
 - **PUT** `/products/:id`: Actualizar un producto (Cloudinary) (Requiere JWT).
 - **DELETE** `/products/:id`: Eliminar un producto (Requiere JWT).
 
@@ -66,6 +69,18 @@ Esta API está diseñada para ser usada por una aplicación de gestión de produ
 
 - Todas las operaciones sensibles están protegidas con JWT.
 - La API está configurada con un rate-limiter de 3 minutos para evitar abuso del servicio.
+
+## Reutilización del Storage de Cloudinary
+
+El almacenamiento de archivos en Cloudinary se puede reutilizar cambiando la carpeta de destino en la función de subida. Esto permite una mayor flexibilidad y organización en el almacenamiento de archivos.
+
+```javascript
+// Ejemplo de uso en el controlador de usuario
+const result = await uploadToCloudinary(req.file.path, 'user_avatars');
+newUser.avatar = result.secure_url;
+// Cambiar 'user_avatars' a cualquier otra carpeta para reutilizar el storage, por ejemplo 'admin_avatars'
+const result = await uploadToCloudinary(req.file.path, 'admin_avatars');
+
 
 ## Despliegue
 

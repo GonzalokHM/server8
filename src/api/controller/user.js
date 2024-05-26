@@ -3,6 +3,7 @@ const { generateSign } = require('../../config/jwt');
 const { deleteFile } = require('../../util/deleteFile');
 const User = require('../model/user');
 const bcrypt = require('bcrypt');
+const uploadToCloudinary = require('../../util/upCloudinary');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -48,31 +49,63 @@ const login = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const oldUser = await User.findById(id);
-    const newUser = new User(req.body);
+    const userId = req.user._id;
+    const oldUser = await User.findById(userId);
+
+    if (!oldUser) {
+      return next(setError(404, 'User not found'));
+    }
+    
+       // Crear un nuevo objeto usuario con los datos antiguos y nuevos
+       const newUser = {
+        ...oldUser.toObject(), // Copia todos los campos del usuario antiguo
+        ...req.body, // Sobrescribe con los campos nuevos
+      };
+
 
     if (req.file) {
-      newUser.avatar = req.file.path;
-      if (oldUser.avatar){
-        deleteFile(oldUser.avatar)
+      // Cambiar 'user_avatars' a cualquier otra carpeta para reutilizar el storage
+      const result = await uploadToCloudinary(req.file.path, 'users_avatars');
+      newUser.avatar = result.secure_url;
+      if (oldUser.avatar) {
+        deleteFile(oldUser.avatar);
       }
     }
 
-    newUser._id = id;
-
-    if (req.userName) {
-      newUser.userName = req.body.userName
-    }
-
-    const UserUpdated = await User.findByIdAndUpdate(id, newUser, {
+    const userUpdated = await User.findByIdAndUpdate(userId, newUser, {
       new: true,
+      runValidators: true,
     });
-    return res.status(200).json(UserUpdated);
+    return res.status(200).json(userUpdated);
   } catch (error) {
+    console.error('Error updating user:', error);
     return next(setError(400, "can't update Users 😱"));
   }
 };
+
+const updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newRole } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { rol: newRole },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: 'Error actualizando el rol del usuario', error });
+  }
+};
+
 const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -83,4 +116,4 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, register, login , updateUser, deleteUser};
+module.exports = { getUsers, register, login, updateUser, deleteUser,updateUserRole };
