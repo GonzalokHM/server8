@@ -11,4 +11,4 @@ const uploadToCloudinary = async (filePath, folder = 'shop8') => {
   }
 };
 
-module.exports = uploadToCloudinary;
+module.exports = {uploadToCloudinary};

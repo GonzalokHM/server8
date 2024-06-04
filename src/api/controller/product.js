@@ -112,7 +112,17 @@ const addToFavorite = async (req, res, next) => {
 const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return next(setError(404, 'Product not found'));
+    }
     const deleteProduct = await Product.findByIdAndDelete(id);
+
+    // Elimina la imagen de Cloudinary
+    if (product.image) {
+      deleteFile(product.image);
+    }
     return res.status(200).json(deleteProduct);
   } catch (error) {
     return next(setError(400, "can't delete products 😱"));

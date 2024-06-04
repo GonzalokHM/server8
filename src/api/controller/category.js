@@ -60,7 +60,17 @@ const updateCategory = async (req, res, next) => {
 const deleteCategory = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const category = await Category.findById(id);
+
+    if (!category) {
+      return next(setError(404, 'Product not found'));
+    }
+
     const deleteCategory = await Category.findByIdAndDelete(id);
+
+    if (category.logo) {
+      deleteFile(category.logo);
+    }
     return res.status(200).json(deleteCategory);
   } catch (error) {
     return next(setError(400, "can't delete category 😱"));

@@ -3,7 +3,7 @@ const { generateSign } = require('../../config/jwt');
 const { deleteFile } = require('../../util/deleteFile');
 const User = require('../model/user');
 const bcrypt = require('bcrypt');
-const uploadToCloudinary = require('../../util/upCloudinary');
+const {uploadToCloudinary} = require('../../util/upCloudinary');
 
 const getUsers = async (req, res, next) => {
   try {
